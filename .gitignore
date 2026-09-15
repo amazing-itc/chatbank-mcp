@@ -1,0 +1,11 @@
+target/
+demo-videos/raw/
+demo-videos/node_modules/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+*.log
+.DS_Store

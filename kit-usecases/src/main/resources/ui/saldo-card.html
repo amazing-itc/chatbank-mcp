@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Saldo</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; padding: 16px; }
+    .card { border: 1px solid color-mix(in srgb, currentColor 18%, transparent); border-radius: 8px; padding: 16px; }
+    .label { font-size: 12px; opacity: 0.7; margin: 0 0 4px; }
+    .titular { font-size: 16px; font-weight: 600; margin: 0 0 12px; }
+    .valor { font-size: 28px; font-weight: 650; letter-spacing: -0.03em; margin: 0; }
+    .negativo { color: #b42318; }
+    .conta { font-size: 12px; opacity: 0.65; margin: 10px 0 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p class="label">Saldo disponível</p>
+    <p class="titular" id="titular">—</p>
+    <p class="valor" id="valor">—</p>
+    <p class="conta" id="conta"></p>
+  </div>
+  <script>
+    function formatar(centavos, moeda) {
+      const n = Number(centavos || 0);
+      const abs = Math.abs(n);
+      const txt = (n < 0 ? "-" : "") + Math.floor(abs / 100) + "," + String(abs % 100).padStart(2, "0");
+      return (moeda === "BRL" || !moeda ? "R$ " : moeda + " ") + txt;
+    }
+    function payload() {
+      if (window.openai && window.openai.toolOutput) return window.openai.toolOutput;
+      return null;
+    }
+    function render(data) {
+      if (!data) return;
+      const d = data.disponivel || {};
+      document.getElementById("titular").textContent = data.titular || "—";
+      const el = document.getElementById("valor");
+      el.textContent = formatar(d.centavos, d.moeda);
+      el.classList.toggle("negativo", Number(d.centavos) < 0);
+      document.getElementById("conta").textContent = data.contaId || "";
+    }
+    function boot() {
+      render(payload());
+    }
+    window.addEventListener("openai:set_globals", boot);
+    window.addEventListener("message", function (ev) {
+      const msg = ev.data || {};
+      if (msg.method === "ui/notifications/tool-result") {
+        const r = msg.params && (msg.params.structuredContent || msg.params.result);
+        render(r);
+      }
+    });
+    boot();
+  </script>
+</body>
+</html>

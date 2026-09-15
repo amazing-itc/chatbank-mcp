@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Extrato</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; padding: 16px; }
+    h1 { font-size: 14px; font-weight: 600; margin: 0 0 12px; }
+    .meta { font-size: 12px; opacity: 0.7; margin: 0 0 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent); }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.65; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .debito { color: #b42318; }
+  </style>
+</head>
+<body>
+  <h1>Extrato</h1>
+  <p class="meta" id="meta"></p>
+  <table>
+    <thead>
+      <tr><th>Data</th><th>Tipo</th><th>Descrição</th><th class="num">Valor</th></tr>
+    </thead>
+    <tbody id="body"></tbody>
+  </table>
+  <script>
+    function formatar(valor) {
+      const c = valor && typeof valor === "object" ? Number(valor.centavos || 0) : Number(valor || 0);
+      const abs = Math.abs(c);
+      return (c < 0 ? "-" : "") + "R$ " + Math.floor(abs / 100) + "," + String(abs % 100).padStart(2, "0");
+    }
+    function payload() {
+      if (window.openai && window.openai.toolOutput) return window.openai.toolOutput;
+      return null;
+    }
+    function render(data) {
+      if (!data) return;
+      document.getElementById("meta").textContent =
+        (data.contaId || "") + " · página " + (data.pagina || 1) + " · " + (data.total || 0) + " lançamento(s)";
+      const tbody = document.getElementById("body");
+      tbody.innerHTML = "";
+      (data.lancamentos || []).forEach(function (l) {
+        const tr = document.createElement("tr");
+        const cents = l.valor && l.valor.centavos;
+        const tdVal = document.createElement("td");
+        tdVal.className = "num" + (Number(cents) < 0 ? " debito" : "");
+        tdVal.textContent = formatar(l.valor);
+        tr.innerHTML = "<td>" + (l.data || "") + "</td><td>" + (l.tipo || "") + "</td><td>" + (l.descricao || "") + "</td>";
+        tr.appendChild(tdVal);
+        tbody.appendChild(tr);
+      });
+    }
+    function boot() { render(payload()); }
+    window.addEventListener("openai:set_globals", boot);
+    window.addEventListener("message", function (ev) {
+      const msg = ev.data || {};
+      if (msg.method === "ui/notifications/tool-result") {
+        render(msg.params && (msg.params.structuredContent || msg.params.result));
+      }
+    });
+    boot();
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "chatbank-mcp-demo-videos",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "playwright": "^1.55.0"
+  }
+}

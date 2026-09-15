@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: chatbank-mcp
+  ai:
+    mcp:
+      server:
+        enabled: true
+        protocol: STREAMABLE
+        name: chatbank-mcp
+        version: 0.1.0
+        type: SYNC
+        instructions: "Jornadas: (1) saldo — consultar_saldo e opcionalmente render_saldo; (2) extrato — consultar_extrato e opcionalmente render_extrato. Este servidor é somente leitura: não envia PIX nem move dinheiro. Nunca invente valores. Nunca peça senha ou OTP."
+        annotation-scanner:
+          enabled: true
+        streamable-http:
+          mcp-endpoint: /mcp
+
+chatbank:
+  kit:
+    auth:
+      enabled: false
+      issuer: http://localhost:8080
+      resource: http://localhost:8080/mcp
+      client-id: chatbank-mcp-dev
+      scopes:
+        - contas:read

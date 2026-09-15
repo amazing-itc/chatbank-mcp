@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "chatbank-mcp": {
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}

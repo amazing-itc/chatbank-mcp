@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatBank MCP — Como usar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --surface: #f4f1ea;
+        --panel: #fffdf8;
+        --ink: #14202b;
+        --muted: #5c6b78;
+        --edge: rgba(20, 32, 43, 0.12);
+        --soft: rgba(20, 32, 43, 0.05);
+        --teal: #2f7a71;
+        --teal-soft: #e4f2ef;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Source Sans 3", sans-serif;
+        color: var(--ink);
+        background: var(--surface);
+      }
+      .shell { max-width: 1280px; margin: 0 auto; padding: 28px 20px 48px; }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+      .eyebrow {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin: 0 0 6px;
+      }
+      h1 { margin: 0; font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; }
+      .subtitle {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+        max-width: 44rem;
+      }
+      .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+      .tab {
+        border: 1px solid var(--edge);
+        background: transparent;
+        color: var(--muted);
+        border-radius: 8px;
+        padding: 8px 14px;
+        font: inherit;
+        font-size: 0.875rem;
+        cursor: pointer;
+      }
+      .tab:hover { background: var(--soft); color: var(--ink); }
+      .tab.active {
+        background: var(--teal);
+        color: #fff;
+        border-color: var(--teal);
+        font-weight: 600;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 1.4fr 0.9fr;
+        gap: 18px;
+        align-items: start;
+      }
+      @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+      .player, .guide {
+        background: var(--panel);
+        border: 1px solid var(--edge);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .player video {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        background: #0f1419;
+      }
+      .player-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px;
+        border-top: 1px solid var(--edge);
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .guide { padding: 20px 18px 22px; min-height: 420px; }
+      .guide h2 { margin: 0 0 6px; font-size: 1.15rem; font-weight: 600; }
+      .guide .lead {
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+      .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+      .step {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: var(--soft);
+      }
+      .step.active { border-color: rgba(47, 122, 113, 0.35); background: var(--teal-soft); }
+      .step-num {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        background: #cfe4e0;
+        color: var(--teal);
+      }
+      .step h3 { margin: 0 0 4px; font-size: 0.92rem; font-weight: 600; }
+      .step p { margin: 0; color: var(--muted); font-size: 0.82rem; line-height: 1.45; }
+      .callout {
+        margin-top: 18px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px dashed rgba(47, 122, 113, 0.35);
+        font-size: 0.82rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .callout strong { color: var(--teal); font-weight: 600; }
+      footer {
+        margin-top: 28px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-family: "IBM Plex Mono", monospace;
+      }
+      .docs {
+        margin-top: 40px;
+      }
+      .docs-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .docs-panel {
+        background: var(--panel);
+        border: 1px solid var(--edge);
+        border-radius: 16px;
+        padding: 28px 28px 36px;
+      }
+      .docs-panel.hidden { display: none; }
+      .prose h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+      }
+      .prose h3 {
+        margin: 28px 0 10px;
+        font-size: 1.08rem;
+      }
+      .prose p, .prose li {
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 0.95rem;
+      }
+      .prose ul, .prose ol { padding-left: 1.2rem; }
+      .prose code, .prose pre {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12.5px;
+      }
+      .prose code {
+        background: var(--soft);
+        padding: 1px 5px;
+        border-radius: 4px;
+        color: var(--ink);
+      }
+      .prose pre {
+        background: #14202b;
+        color: #f3ead8;
+        padding: 14px 16px;
+        border-radius: 10px;
+        overflow: auto;
+        line-height: 1.5;
+      }
+      .prose pre code {
+        background: none;
+        color: inherit;
+        padding: 0;
+      }
+      .prose table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 12px 0 20px;
+      }
+      .prose th, .prose td {
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--edge);
+        vertical-align: top;
+      }
+      .prose th { color: var(--muted); font-weight: 600; }
+      .prose td { color: var(--ink); }
+      .howto {
+        list-style: none;
+        margin: 16px 0 24px;
+        padding: 0;
+        display: grid;
+        gap: 12px;
+      }
+      .howto li {
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: var(--soft);
+        color: var(--ink);
+      }
+      .howto .n {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: #cfe4e0;
+        color: var(--teal);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div>
+          <p class="eyebrow">Kit de referência · somente leitura</p>
+          <h1>ChatBank MCP — como usar</h1>
+          <p class="subtitle">
+            Do <code>mvn spring-boot:run</code> até plugar o <code>BankingProvider</code>:
+            conectar no Inspector, consultar saldo e extrato, tratar conta inválida.
+          </p>
+        </div>
+      </header>
+      <nav class="tabs" id="tabs" aria-label="Seções do tour"></nav>
+      <div class="layout">
+        <section class="player">
+          <video id="player" controls playsinline></video>
+          <div class="player-meta">
+            <span id="clipLabel">—</span>
+            <span id="clipTime">00:00</span>
+          </div>
+        </section>
+        <aside class="guide" id="guide">
+          <h2 id="guideTitle">—</h2>
+          <p class="lead" id="guideLead"></p>
+          <ol class="steps" id="steps"></ol>
+          <div class="callout" id="callout"></div>
+        </aside>
+      </div>
+      <section class="docs" id="guias">
+        <p class="eyebrow">Guias em texto</p>
+        <nav class="docs-nav" aria-label="Guias">
+          <button type="button" class="tab active" data-doc="facil">Guia rápido</button>
+          <button type="button" class="tab" data-doc="banco">Conecte seu banco</button>
+          <button type="button" class="tab" data-doc="openai">ChatGPT / OpenAI</button>
+        </nav>
+
+        <article class="docs-panel prose" id="doc-facil">
+          <h2>Guia rápido</h2>
+          <p>Onboarding após o clone. Pré-requisitos: <strong>Java 21</strong>, <strong>Maven 3.9+</strong>, <strong>Node.js</strong> (Inspector).</p>
+          <p>Endpoint MCP: <code>http://localhost:8080/mcp</code> (Streamable HTTP).</p>
+          <pre><code>mvn clean install
+mvn spring-boot:run -pl starter-app</code></pre>
+          <pre><code>npx @modelcontextprotocol/inspector@latest</code></pre>
+          <p>No Inspector: transporte <strong>Streamable HTTP</strong> → URL <code>http://localhost:8080/mcp</code> → <strong>Connect</strong> → aba <strong>Tools</strong>.</p>
+          <p>Você deve ver o servidor <code>chatbank-mcp</code> <code>0.1.0</code> e as tools <code>consultar_saldo</code>, <code>consultar_extrato</code>, <code>render_saldo</code> e <code>render_extrato</code>.</p>
+
+          <h3>Banco demo</h3>
+          <p>Cinco contas com saldos e extratos determinísticos (somente leitura).</p>
+          <table>
+            <thead>
+              <tr><th>contaId</th><th>Titular</th><th>Saldo inicial</th><th>Para que serve</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>conta-pf-ana</code></td><td>Ana Souza</td><td>R$ 1.523,45</td><td>PF padrão</td></tr>
+              <tr><td><code>conta-pj-acme</code></td><td>Acme Serviços Ltda</td><td>R$ 89.000,00</td><td>Conta PJ</td></tr>
+              <tr><td><code>conta-pf-bruno</code></td><td>Bruno Lima</td><td>−R$ 120,50</td><td>Saldo negativo</td></tr>
+              <tr><td><code>conta-pf-carla</code></td><td>Carla Mendes</td><td>R$ 42.500,00</td><td>Extrato longo (paginação e filtros)</td></tr>
+              <tr><td><code>conta-pj-delta</code></td><td>Delta Comércio S.A.</td><td>R$ 157.800,90</td><td>TED / faturamento</td></tr>
+            </tbody>
+          </table>
+          <p>Valores no <code>structuredContent</code> vêm em <strong>centavos</strong> (<code>152345</code> = R$ 1.523,45). O tipo <code>PIX</code> no extrato é só categoria de lançamento — o kit não envia PIX.</p>
+
+          <h3>1. Saldo</h3>
+          <p>Tool: <code>consultar_saldo</code></p>
+          <pre><code>{ "contaId": "conta-pf-ana" }</code></pre>
+          <p>Resposta esperada:</p>
+          <pre><code>{
+  "contaId": "conta-pf-ana",
+  "titular": "Ana Souza",
+  "disponivel": { "centavos": 152345, "moeda": "BRL" }
+}</code></pre>
+          <p>Texto: <code>Saldo disponível de Ana Souza (conta-pf-ana): R$ 1523,45.</code></p>
+          <table>
+            <thead>
+              <tr><th>Argumento</th><th>Resultado</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>{ "contaId": "conta-pf-bruno" }</code></td><td><code>centavos</code>: <code>-12050</code></td></tr>
+              <tr><td><code>{ "contaId": "conta-xyz" }</code></td><td><code>isError</code>: Conta não encontrada: conta-xyz</td></tr>
+            </tbody>
+          </table>
+
+          <h3>2. Extrato (com filtros)</h3>
+          <p>Tool: <code>consultar_extrato</code>. Use <code>conta-pf-carla</code> — tem 18 lançamentos.</p>
+          <table>
+            <thead>
+              <tr><th>Campo</th><th>Obrigatório</th><th>Default</th><th>Formato</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>contaId</code></td><td>sim</td><td>—</td><td>ID estável</td></tr>
+              <tr><td><code>dataInicio</code></td><td>não</td><td>sem corte</td><td><code>YYYY-MM-DD</code></td></tr>
+              <tr><td><code>dataFim</code></td><td>não</td><td>sem corte</td><td><code>YYYY-MM-DD</code></td></tr>
+              <tr><td><code>tipo</code></td><td>não</td><td>todos</td><td><code>CREDITO</code> · <code>DEBITO</code> · <code>PIX</code> · <code>TED</code> · <code>TARIFA</code></td></tr>
+              <tr><td><code>pagina</code></td><td>não</td><td><code>1</code></td><td>1-based</td></tr>
+              <tr><td><code>tamanho</code></td><td>não</td><td><code>10</code></td><td>máximo <code>50</code></td></tr>
+            </tbody>
+          </table>
+          <p>Ordenação: data decrescente. A resposta inclui <code>total</code> para a próxima página.</p>
+          <p><strong>Página 1, sem filtro</strong></p>
+          <pre><code>{ "contaId": "conta-pf-carla" }</code></pre>
+          <p>Texto: <code>Extrato da conta conta-pf-carla: 10 lançamento(s) na página 1 de um total de 18.</code></p>
+          <p><strong>Só PIX de agosto/2026, 5 itens</strong></p>
+          <pre><code>{
+  "contaId": "conta-pf-carla",
+  "dataInicio": "2026-08-01",
+  "dataFim": "2026-08-31",
+  "tipo": "PIX",
+  "pagina": 1,
+  "tamanho": 5
+}</code></pre>
+          <p>Resposta (recorte):</p>
+          <pre><code>{
+  "contaId": "conta-pf-carla",
+  "pagina": 1,
+  "tamanho": 5,
+  "total": 6,
+  "lancamentos": [
+    {
+      "id": "car-018",
+      "data": "2026-08-30",
+      "tipo": "PIX",
+      "descricao": "PIX recebido — aluguel sala",
+      "valor": { "centavos": 180000, "moeda": "BRL", "formatado": "1800,00" }
+    }
+  ]
+}</code></pre>
+          <p><strong>Página 2</strong></p>
+          <pre><code>{ "contaId": "conta-pf-carla", "pagina": 2, "tamanho": 10 }</code></pre>
+          <p><strong>Só tarifas da Ana</strong></p>
+          <pre><code>{ "contaId": "conta-pf-ana", "tipo": "TARIFA" }</code></pre>
+          <p><strong>Conta inexistente</strong></p>
+          <pre><code>{ "contaId": "conta-xyz" }</code></pre>
+          <p><code>isError</code>: Conta não encontrada: conta-xyz.</p>
+
+          <h3>Widgets e OAuth (opcional)</h3>
+          <p>Depois de <code>consultar_saldo</code> / <code>consultar_extrato</code>, o modelo pode chamar <code>render_saldo</code> e <code>render_extrato</code> (HTML em <code>kit-usecases/src/main/resources/ui</code>).</p>
+          <p>OAuth 2.1 de desenvolvimento: <code>chatbank.kit.auth.enabled=true</code> e usuários <code>ana</code>…<code>delta</code> / senha <code>demo</code>. O default continua <strong>sem login</strong>.</p>
+
+          <h3>Plugar o banco</h3>
+          <p>Contrato: <code>kit-provider-api</code> → <code>BankingProvider</code> (saldo e extrato).</p>
+          <ol>
+            <li>Copie <code>adapter-sample/MeuBancoProvider.java</code>.</li>
+            <li>Implemente as chamadas ao core / BFF (mapa HTTP → tipos no guia ao lado).</li>
+            <li>Registre o bean:</li>
+          </ol>
+          <pre><code>@Bean
+BankingProvider meuBanco(MeuClient client) {
+    return new MeuBancoProvider(client);
+}</code></pre>
+          <p>O mock é <code>@ConditionalOnMissingBean</code> e deixa de ser criado.</p>
+        </article>
+
+        <article class="docs-panel prose hidden" id="doc-banco">
+          <h2>Conecte seu banco</h2>
+          <p>O único ponto de troca é <code>BankingProvider</code>.</p>
+          <p><strong>Contrato:</strong> <code>kit-provider-api/src/main/java/br/com/chatbank/kit/provider/BankingProvider.java</code></p>
+          <pre><code>public interface BankingProvider {
+    Saldo consultarSaldo(ContaRef conta);
+    Pagina&lt;Lancamento&gt; consultarExtrato(ContaRef conta, FiltroExtrato filtro);
+}</code></pre>
+          <p><code>kit-provider-api</code> <strong>não depende de Spring</strong>. Você implementa em Java puro e testa com JUnit.</p>
+
+          <h3>Como o mock entra (e como ele sai)</h3>
+          <p>Arquivo: <code>mock-bank/.../MockBankConfiguration.java</code></p>
+          <pre><code>@Bean
+@ConditionalOnMissingBean(BankingProvider.class)
+BankingProvider mockBankProvider() {
+    return new MockBankProvider();
+}</code></pre>
+          <p>Se <strong>ninguém</strong> declara um <code>BankingProvider</code>, o mock é o banco. Se <strong>você</strong> declara um <code>@Bean</code>, o mock não é criado.</p>
+          <p>Isso está testado em <code>starter-app/src/test/java/.../ProviderSubstitutionIT.java</code>.</p>
+
+          <h3>O que fazer</h3>
+          <ol>
+            <li>Copie o esqueleto em <code>adapter-sample/MeuBancoProvider.java</code>.</li>
+            <li>Implemente saldo e extrato contra o sandbox (veja o mapa abaixo).</li>
+            <li>No <code>starter-app</code> (ou num módulo seu), registre:</li>
+          </ol>
+          <pre><code>@Bean
+BankingProvider meuBancoProvider(MeuClient client) {
+    return new MeuBancoProvider(client);
+}</code></pre>
+          <p>4. Suba de novo o <code>starter-app</code> e no Inspector use um <code>contaId</code> <strong>real</strong> do seu sandbox.</p>
+
+          <h3>Mapa HTTP → tipos do kit</h3>
+          <p>O adapter traduz a API do banco. A camada MCP não muda.</p>
+          <table>
+            <thead>
+              <tr><th>Resposta do sandbox</th><th>Tipo do kit</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>id da conta</td><td><code>contaId</code> em <code>Saldo</code> / argumento <code>ContaRef</code></td></tr>
+              <tr><td>nome do titular</td><td><code>Saldo.titular</code></td></tr>
+              <tr><td>saldo em reais (ex.: 1523.45)</td><td><code>Money.brl(152345)</code> — <strong>centavos</strong>, <code>long</code></td></tr>
+              <tr><td>item de extrato</td><td><code>Lancamento(id, data, tipo, descricao, Money.brl(…))</code></td></tr>
+              <tr><td>lista + total + página</td><td><code>new Pagina&lt;&gt;(itens, filtro.pagina(), filtro.tamanho(), total)</code></td></tr>
+            </tbody>
+          </table>
+          <p><code>FiltroExtrato</code> já chega normalizado: <code>pagina</code> ≥ 1, <code>tamanho</code> entre 1 e 50, datas em <code>LocalDate</code>, <code>tipo</code> em <code>TipoLancamento</code> ou <code>null</code>.</p>
+          <p>Exemplo mínimo de saldo:</p>
+          <pre><code>return new Saldo(conta.id(), body.titular(), Money.brl(body.centavos()));</code></pre>
+          <p>Exemplo mínimo de um lançamento:</p>
+          <pre><code>new Lancamento(
+        item.id(),
+        LocalDate.parse(item.data()),
+        TipoLancamento.valueOf(item.tipo()),
+        item.descricao(),
+        Money.brl(item.centavos()));</code></pre>
+          <p>Se a API pagina por <strong>cursor</strong> e não por página 1-based: converta no adapter (<code>pagina</code>/<code>tamanho</code> → offset ou cursor interno). O contrato do kit continua <code>Pagina</code>.</p>
+
+          <h3>Erros (o modelo só vê a mensagem)</h3>
+          <table>
+            <thead>
+              <tr><th>HTTP / situação</th><th>O que lançar</th><th>O que o Inspector mostra</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>404 / conta desconhecida</td><td><code>ContaNaoEncontradaException(conta.id())</code></td><td><code>isError</code>: Conta não encontrada: …</td></tr>
+              <tr><td>403 / 429 / timeout / 5xx</td><td><code>ProviderException("mensagem segura")</code></td><td><code>isError</code> com essa mensagem</td></tr>
+              <tr><td>Conta existe e não tem lançamento</td><td><code>new Pagina&lt;&gt;(List.of(), pagina, tamanho, 0)</code></td><td>Extrato vazio, <strong>não</strong> é erro</td></tr>
+            </tbody>
+          </table>
+          <p>A mensagem de <code>ProviderException</code> vai para o modelo. Sem token, stack, trace id ou body interno.</p>
+          <p>Conta inexistente é o <strong>mesmo</strong> comportamento nos dois métodos — o mock e o esqueleto fazem isso.</p>
+
+          <h3>Regras do contrato (não quebre)</h3>
+          <ul>
+            <li><code>contaId</code> é identificador <strong>estável</strong> (o modelo reutiliza em follow-ups)</li>
+            <li>dinheiro em <strong>centavos</strong> + <code>moeda</code> (<code>BRL</code>)</li>
+            <li>não aceite senha, OTP ou PAN como argumento de tool</li>
+          </ul>
+
+          <h3>Checklist</h3>
+          <ul>
+            <li><code>mvn test</code> do seu adapter passa com uma conta de sandbox</li>
+            <li>Inspector com o bean real: saldo e extrato filtrado</li>
+            <li>Conta inválida em saldo <strong>e</strong> em extrato → Conta não encontrada</li>
+            <li>Conta válida sem lançamentos → página vazia, sem <code>isError</code></li>
+          </ul>
+        </article>
+
+        <article class="docs-panel prose hidden" id="doc-openai">
+          <h2>Como configurar no ChatGPT</h2>
+          <p>
+            Mesmo caminho que um app publicado (como a WebMotors): o usuário <strong>adiciona o aplicativo</strong>
+            no ChatGPT e depois conversa com ele. A diferença deste kit é que, enquanto não estiver no diretório,
+            o time cria o conector à mão no <strong>modo desenvolvedor</strong>.
+          </p>
+
+          <h3>O que o ChatGPT precisa</h3>
+          <ul>
+            <li>Conta ChatGPT paga (Plus, Pro, Business, Enterprise ou Edu) — conector custom exige isso</li>
+            <li>Servidor MCP em <strong>HTTPS público</strong> (não aceita <code>localhost</code>)</li>
+            <li>Endpoint Streamable HTTP: <code>https://SEU-DOMINIO/mcp</code></li>
+          </ul>
+          <p>
+            Em desenvolvimento, exponha a 8080 com um túnel (ngrok, Cloudflare Tunnel) e use a URL HTTPS que ele devolver + <code>/mcp</code>.
+          </p>
+
+          <h3>1. Ligar o modo desenvolvedor</h3>
+          <ol class="howto">
+            <li><span class="n">1</span><span>Abra o ChatGPT no <strong>navegador</strong> (não no app mobile).</span></li>
+            <li><span class="n">2</span><span>Perfil → <strong>Configurações</strong> → <strong>Apps &amp; Connectors</strong> (em algumas contas aparece como Aplicativos).</span></li>
+            <li><span class="n">3</span><span>Role até <strong>Advanced settings</strong> e ligue <strong>Developer mode</strong>.</span></li>
+          </ol>
+
+          <h3>2. Criar o conector do kit</h3>
+          <ol class="howto">
+            <li><span class="n">1</span><span>Em <strong>Apps &amp; Connectors</strong>, clique em <strong>Create</strong> (criar conector).</span></li>
+            <li>
+              <span class="n">2</span>
+              <span>
+                Preencha:
+                <br />Nome: <code>ChatBank MCP</code>
+                <br />Descrição: <code>Saldo e extrato — somente leitura</code>
+                <br />URL: <code>https://SEU-HOST/mcp</code>
+                <br />Autenticação: <code>None</code> no demo (OAuth só se <code>chatbank.kit.auth.enabled=true</code>)
+              </span>
+            </li>
+            <li><span class="n">3</span><span>Marque que confia no aplicativo e clique em <strong>Create</strong>.</span></li>
+            <li><span class="n">4</span><span>Se pedir autorização, aceite. As tools devem aparecer: <code>consultar_saldo</code>, <code>consultar_extrato</code>, <code>render_saldo</code>, <code>render_extrato</code>.</span></li>
+          </ol>
+
+          <h3>3. Usar na conversa (estilo WebMotors)</h3>
+          <p>
+            Na WebMotors o usuário busca o app, conecta e começa um chat com <code>@Webmotors</code>.
+            Aqui é o mesmo gesto, com o conector que você criou:
+          </p>
+          <ol class="howto">
+            <li><span class="n">1</span><span>Abra uma <strong>nova conversa</strong>.</span></li>
+            <li><span class="n">2</span><span>No <code>+</code> do compositor, escolha <strong>Developer mode</strong> e selecione <strong>ChatBank MCP</strong> como fonte.</span></li>
+            <li><span class="n">3</span><span>Pergunte em linguagem natural. O modelo chama as tools — você não cola JSON.</span></li>
+          </ol>
+          <p>Exemplos para colar:</p>
+          <pre><code>Qual o saldo da conta-pf-ana?
+
+Mostra o extrato de PIX da conta-pf-carla em agosto de 2026.
+
+A Ana consegue pagar um almoço de 40 reais?
+
+Manda um PIX de 25 reais para o João.</code></pre>
+          <p>
+            Os três primeiros devem chamar <code>consultar_saldo</code> / <code>consultar_extrato</code>.
+            O último <strong>não</strong> deve chamar tool de envio — o kit é somente leitura.
+          </p>
+
+          <h3>Quando o plugin estiver no diretório</h3>
+          <p>Aí o caminho fica idêntico ao da WebMotors, sem modo desenvolvedor:</p>
+          <ol class="howto">
+            <li><span class="n">1</span><span>Menu lateral do ChatGPT → <strong>Aplicativos</strong> / <strong>Plugins</strong>.</span></li>
+            <li><span class="n">2</span><span>Busque o nome publicado pelo banco e clique em <strong>Conectar</strong>.</span></li>
+            <li><span class="n">3</span><span>Nova conversa → <code>@NomeDoBanco</code> → “qual o saldo?” / “extrato de agosto”.</span></li>
+          </ol>
+          <p>Quem publica é a instituição (domínio próprio, verificação OpenAI, privacy policy). Este repositório não é um listing.</p>
+
+          <h3>Se não listar as tools</h3>
+          <ul>
+            <li>Developer mode está mesmo ligado? Sem ele o ChatGPT trata o servidor como fonte de pesquisa e some as tools de leitura.</li>
+            <li>A URL termina em <code>/mcp</code> e é HTTPS alcançável da internet?</li>
+            <li>Feche o chat e abra outro depois de criar o conector.</li>
+            <li>No Inspector, o mesmo endpoint precisa responder <code>tools/list</code> com as quatro tools.</li>
+          </ul>
+        </article>
+      </section>
+
+      <footer>
+        Suba o kit em localhost:8080/mcp · Inspector Streamable HTTP · guias abaixo do vídeo
+      </footer>
+    </div>
+    <script>
+      const SECTIONS = [
+        {
+          id: "completo",
+          tab: "Tour completo",
+          file: "00-tour-completo.webm",
+          title: "Percurso inteiro do kit",
+          lead: "Conectar o host, saldo da Ana, extrato da Carla, erro de conta e o ponto único de troca do banco.",
+          callout:
+            "<strong>No Inspector de verdade:</strong> transporte Streamable HTTP e URL http://localhost:8080/mcp. Os payloads são os mesmos do GUIA-FACIL.",
+          steps: [
+            { until: 8, title: "Conectar", body: "Endpoint /mcp, servidor chatbank-mcp 0.1.0 e as quatro tools de leitura." },
+            { until: 15, title: "Saldo", body: "conta-pf-ana → R$ 1.523,45 em centavos (152345)." },
+            { until: 22, title: "Extrato", body: "conta-pf-carla, PIX de agosto — paginação e tipo como categoria." },
+            { until: 27, title: "Erro", body: "conta-xyz vira isError, sem stack." },
+            { until: 999, title: "Adapter", body: "Implemente BankingProvider e registre o @Bean. O mock some." },
+          ],
+        },
+        {
+          id: "conectar",
+          tab: "Conectar",
+          file: "01-conectar.webm",
+          title: "Ligar o host ao servidor",
+          lead: "O kit não tem tela própria. O Inspector (ou o ChatGPT) fala com POST /mcp.",
+          callout: "<strong>Comando:</strong> mvn spring-boot:run -pl starter-app e, noutro terminal, npx @modelcontextprotocol/inspector@latest",
+          steps: [
+            { until: 4, title: "URL", body: "Streamable HTTP em http://localhost:8080/mcp." },
+            { until: 999, title: "Tools", body: "consultar_saldo, consultar_extrato, render_saldo e render_extrato." },
+          ],
+        },
+        {
+          id: "saldo",
+          tab: "Saldo",
+          file: "02-consultar-saldo.webm",
+          title: "Tool consultar_saldo",
+          lead: "Saldo pontual de uma conta estável. O modelo reutiliza o contaId nos follow-ups.",
+          callout: "<strong>Dinheiro:</strong> sempre em centavos + moeda BRL. Bruno (conta-pf-bruno) tem saldo negativo.",
+          steps: [
+            { until: 4, title: "Argumento", body: "contaId = conta-pf-ana." },
+            { until: 999, title: "Resposta", body: "Titular Ana Souza e disponivel.centavos = 152345." },
+          ],
+        },
+        {
+          id: "extrato",
+          tab: "Extrato",
+          file: "03-consultar-extrato.webm",
+          title: "Tool consultar_extrato",
+          lead: "Filtros de período, tipo e página. Carla tem 18 lançamentos — boa para paginar.",
+          callout: "<strong>PIX:</strong> no extrato é só tipo de lançamento. Este kit não envia dinheiro.",
+          steps: [
+            { until: 4, title: "Filtros", body: "Carla, agosto/2026, tipo PIX." },
+            { until: 999, title: "Página", body: "5 itens na página 1, total 6 — use pagina=2 para o resto." },
+          ],
+        },
+        {
+          id: "erro",
+          tab: "Erro",
+          file: "04-conta-invalida.webm",
+          title: "Conta que não existe",
+          lead: "O mesmo contrato nos dois métodos: ContaNaoEncontradaException vira isError.",
+          callout: "<strong>Não vaze:</strong> a mensagem vai ao modelo. Sem token, stack ou body interno.",
+          steps: [
+            { until: 4, title: "Chamada", body: "consultar_saldo com conta-xyz." },
+            { until: 999, title: "isError", body: "Conta não encontrada: conta-xyz." },
+          ],
+        },
+        {
+          id: "adapter",
+          tab: "Seu banco",
+          file: "05-plugar-banco.webm",
+          title: "Trocar o mock pelo sandbox",
+          lead: "Copie adapter-sample/MeuBancoProvider.java, mapeie HTTP → Money/Lancamento/Pagina e registre o bean.",
+          callout: "<strong>Guia:</strong> CONECTE-SEU-BANCO.md na raiz do kit. 404 nos dois métodos; conta vazia é Pagina com total 0.",
+          steps: [
+            { until: 3, title: "Bean", body: "@Bean BankingProvider — o mock é ConditionalOnMissingBean." },
+            { until: 999, title: "Mapa", body: "Reais → centavos; lista → Pagina; 404 → ContaNaoEncontradaException." },
+          ],
+        },
+      ]
+
+      const tabsEl = document.getElementById("tabs")
+      const player = document.getElementById("player")
+      const clipLabel = document.getElementById("clipLabel")
+      const clipTime = document.getElementById("clipTime")
+      const guideTitle = document.getElementById("guideTitle")
+      const guideLead = document.getElementById("guideLead")
+      const stepsEl = document.getElementById("steps")
+      const callout = document.getElementById("callout")
+      let current = SECTIONS[0]
+
+      function fmt(t) {
+        const m = Math.floor(t / 60)
+        const s = Math.floor(t % 60)
+        return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
+      }
+      function renderTabs() {
+        tabsEl.innerHTML = ""
+        SECTIONS.forEach((section) => {
+          const btn = document.createElement("button")
+          btn.type = "button"
+          btn.className = "tab" + (section.id === current.id ? " active" : "")
+          btn.textContent = section.tab
+          btn.addEventListener("click", () => selectSection(section.id))
+          tabsEl.appendChild(btn)
+        })
+      }
+      function renderGuide(activeIdx) {
+        guideTitle.textContent = current.title
+        guideLead.textContent = current.lead
+        callout.innerHTML = current.callout
+        stepsEl.innerHTML = ""
+        current.steps.forEach((step, idx) => {
+          const li = document.createElement("li")
+          li.className = "step" + (idx === activeIdx ? " active" : "")
+          li.innerHTML = `<div class="step-num">${idx + 1}</div><div><h3>${step.title}</h3><p>${step.body}</p></div>`
+          stepsEl.appendChild(li)
+        })
+      }
+      function activeStepIndex(time) {
+        return current.steps.findIndex((step) => time < step.until)
+      }
+      function selectSection(id) {
+        current = SECTIONS.find((s) => s.id === id) ?? SECTIONS[0]
+        renderTabs()
+        clipLabel.textContent = current.file
+        player.src = current.file
+        renderGuide(0)
+        player.play().catch(() => {})
+      }
+      player.addEventListener("timeupdate", () => {
+        clipTime.textContent = fmt(player.currentTime || 0)
+        const idx = activeStepIndex(player.currentTime || 0)
+        renderGuide(idx < 0 ? current.steps.length - 1 : idx)
+      })
+      renderTabs()
+      selectSection("completo")
+
+      document.querySelectorAll("[data-doc]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.doc
+          document.querySelectorAll("[data-doc]").forEach((b) => b.classList.toggle("active", b === btn))
+          document.getElementById("doc-facil").classList.toggle("hidden", id !== "facil")
+          document.getElementById("doc-banco").classList.toggle("hidden", id !== "banco")
+          document.getElementById("doc-openai").classList.toggle("hidden", id !== "openai")
+        })
+      })
+    </script>
+  </body>
+</html>

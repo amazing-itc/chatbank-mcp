@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatBank MCP — Laboratório</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f1419;
+        --panel: #171e26;
+        --ink: #e8eef4;
+        --muted: #8b9aab;
+        --line: #2a3542;
+        --teal: #3d9b8f;
+        --teal-dim: #245c55;
+        --sand: #f3ead8;
+        --danger: #d36b6b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Source Sans 3", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      .app {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 100vh;
+      }
+      aside {
+        border-right: 1px solid var(--line);
+        padding: 28px 20px;
+        background: #12181f;
+      }
+      .mark {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin: 0 0 8px;
+      }
+      aside h1 {
+        margin: 0 0 6px;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      aside p {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.45;
+      }
+      nav { display: grid; gap: 8px; }
+      .nav-btn {
+        text-align: left;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--muted);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+        cursor: pointer;
+      }
+      .nav-btn.active {
+        background: var(--teal-dim);
+        border-color: var(--teal);
+        color: var(--sand);
+      }
+      main { padding: 32px 36px 48px; }
+      h2 { margin: 0 0 8px; font-size: 1.45rem; font-weight: 600; }
+      .lead { margin: 0 0 22px; color: var(--muted); max-width: 46rem; }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      label {
+        display: block;
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      input, select, textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: #0f1419;
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+      }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .actions { display: flex; gap: 10px; margin-top: 14px; }
+      button.primary, button.ghost {
+        border-radius: 8px;
+        padding: 10px 16px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button.primary {
+        border: 0;
+        background: var(--teal);
+        color: #06221f;
+      }
+      button.ghost {
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--ink);
+      }
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--sand);
+      }
+      .ok { color: #8fd4c8; }
+      .err { color: var(--danger); }
+      .hidden { display: none; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+      th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+      th { color: var(--muted); font-weight: 500; }
+      code { font-family: "IBM Plex Mono", monospace; color: var(--sand); }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside>
+        <p class="mark">ChatBank MCP Kit</p>
+        <h1>Como usar</h1>
+        <p>Laboratório do banco demo. Mesmos payloads do Inspector.</p>
+        <nav>
+          <button type="button" class="nav-btn active" data-step="conectar">1. Conectar</button>
+          <button type="button" class="nav-btn" data-step="saldo">2. Consultar saldo</button>
+          <button type="button" class="nav-btn" data-step="extrato">3. Consultar extrato</button>
+          <button type="button" class="nav-btn" data-step="erro">4. Conta inválida</button>
+          <button type="button" class="nav-btn" data-step="adapter">5. Plugar o banco</button>
+        </nav>
+      </aside>
+      <main>
+        <section id="conectar">
+          <h2>Conectar o host MCP</h2>
+          <p class="lead">
+            O kit sobe em <code>http://localhost:8080/mcp</code> (Streamable HTTP). No Inspector, esse é o único endereço.
+          </p>
+          <div class="card">
+            <label>Transporte</label>
+            <input value="Streamable HTTP" readonly />
+            <div style="height: 12px"></div>
+            <label>URL do servidor</label>
+            <input id="mcpUrl" value="http://localhost:8080/mcp" readonly />
+            <div class="actions">
+              <button type="button" class="primary" id="btnConnect">Connect</button>
+            </div>
+          </div>
+          <div class="card hidden" id="connectResult">
+            <pre class="ok">Servidor chatbank-mcp 0.1.0
+Tools: consultar_saldo · consultar_extrato · render_saldo · render_extrato
+Somente leitura. Sem senha ou OTP.</pre>
+          </div>
+        </section>
+
+        <section id="saldo" class="hidden">
+          <h2>consultar_saldo</h2>
+          <p class="lead">Peça o saldo de uma conta estável. Valores vêm em centavos (152345 = R$ 1.523,45).</p>
+          <div class="card">
+            <label>contaId</label>
+            <input id="saldoConta" value="conta-pf-ana" />
+            <div class="actions">
+              <button type="button" class="primary" id="btnSaldo">Run tool</button>
+            </div>
+          </div>
+          <div class="card hidden" id="saldoResult"></div>
+        </section>
+
+        <section id="extrato" class="hidden">
+          <h2>consultar_extrato</h2>
+          <p class="lead">
+            Use <code>conta-pf-carla</code> para paginação. O tipo PIX no filtro é só categoria de lançamento — o kit não envia PIX.
+          </p>
+          <div class="card">
+            <div class="row">
+              <div>
+                <label>contaId</label>
+                <input id="extConta" value="conta-pf-carla" />
+              </div>
+              <div>
+                <label>tipo</label>
+                <select id="extTipo">
+                  <option value="">todos</option>
+                  <option value="PIX" selected>PIX</option>
+                  <option value="TED">TED</option>
+                  <option value="TARIFA">TARIFA</option>
+                </select>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 12px">
+              <div>
+                <label>dataInicio</label>
+                <input id="extIni" value="2026-08-01" />
+              </div>
+              <div>
+                <label>dataFim</label>
+                <input id="extFim" value="2026-08-31" />
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" class="primary" id="btnExtrato">Run tool</button>
+            </div>
+          </div>
+          <div class="card hidden" id="extratoResult"></div>
+        </section>
+
+        <section id="erro" class="hidden">
+          <h2>Conta inexistente</h2>
+          <p class="lead">O adapter lança ContaNaoEncontradaException. A tool devolve isError, sem stack.</p>
+          <div class="card">
+            <label>contaId</label>
+            <input id="erroConta" value="conta-xyz" />
+            <div class="actions">
+              <button type="button" class="primary" id="btnErro">Run tool</button>
+            </div>
+          </div>
+          <div class="card hidden" id="erroResult"></div>
+        </section>
+
+        <section id="adapter" class="hidden">
+          <h2>Plugar o seu banco</h2>
+          <p class="lead">Um único ponto de troca: implemente BankingProvider e registre o bean. O mock some sozinho.</p>
+          <div class="card">
+            <pre>@Bean
+BankingProvider meuBanco(MeuClient client) {
+    return new MeuBancoProvider(client);
+}</pre>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr><th>HTTP</th><th>No kit</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>404</td><td><code>ContaNaoEncontradaException</code></td></tr>
+                <tr><td>saldo em reais</td><td><code>Money.brl(centavos)</code></td></tr>
+                <tr><td>lista paginada</td><td><code>new Pagina&lt;&gt;(itens, pagina, tamanho, total)</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script>
+      const screens = ["conectar", "saldo", "extrato", "erro", "adapter"]
+      function show(id) {
+        screens.forEach((s) => document.getElementById(s).classList.toggle("hidden", s !== id))
+        document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.step === id))
+      }
+      document.querySelectorAll(".nav-btn").forEach((b) => b.addEventListener("click", () => show(b.dataset.step)))
+      document.getElementById("btnConnect").addEventListener("click", () => {
+        document.getElementById("connectResult").classList.remove("hidden")
+      })
+      document.getElementById("btnSaldo").addEventListener("click", () => {
+        const id = document.getElementById("saldoConta").value.trim()
+        const box = document.getElementById("saldoResult")
+        box.classList.remove("hidden")
+        if (id === "conta-pf-ana") {
+          box.innerHTML = `<pre class="ok">Saldo disponível de Ana Souza (conta-pf-ana): R$ 1523,45.
+
+{
+  "contaId": "conta-pf-ana",
+  "titular": "Ana Souza",
+  "disponivel": { "centavos": 152345, "moeda": "BRL" }
+}</pre>`
+        } else if (id === "conta-pf-bruno") {
+          box.innerHTML = `<pre class="ok">Saldo disponível de Bruno Lima (conta-pf-bruno): R$ -120,50.
+
+{ "disponivel": { "centavos": -12050, "moeda": "BRL" } }</pre>`
+        } else {
+          box.innerHTML = `<pre class="err">isError: Conta não encontrada: ${id}</pre>`
+        }
+      })
+      document.getElementById("btnExtrato").addEventListener("click", () => {
+        const box = document.getElementById("extratoResult")
+        box.classList.remove("hidden")
+        box.innerHTML = `<pre class="ok">Extrato da conta conta-pf-carla: 5 lançamento(s) na página 1 de um total de 6.
+
+{
+  "contaId": "conta-pf-carla",
+  "pagina": 1,
+  "tamanho": 5,
+  "total": 6,
+  "lancamentos": [
+    { "id": "car-018", "data": "2026-08-30", "tipo": "PIX",
+      "descricao": "PIX recebido — aluguel sala",
+      "valor": { "centavos": 180000, "moeda": "BRL", "formatado": "1800,00" } }
+  ]
+}</pre>`
+      })
+      document.getElementById("btnErro").addEventListener("click", () => {
+        const box = document.getElementById("erroResult")
+        box.classList.remove("hidden")
+        box.innerHTML = `<pre class="err">isError: Conta não encontrada: conta-xyz</pre>`
+      })
+    </script>
+  </body>
+</html>
