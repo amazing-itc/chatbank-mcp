@@ -1,0 +1,14 @@
+ChatBank MCP Kit
+Copyright (c) 2026 Amazing
+
+This product is licensed under the MIT License. See the LICENSE file.
+
+Third-party components are used under their own licenses. This notice does not relicense them.
+
+- Spring Boot 4.0.7 (org.springframework.boot) — Apache License 2.0
+- Spring AI 2.0.0-M8, including spring-ai-starter-mcp-server-webmvc — Apache License 2.0
+- Spring Authorization Server and the OAuth2 resource server (org.springframework.boot) — Apache License 2.0
+- Jackson (com.fasterxml.jackson.core) — Apache License 2.0
+- JUnit Jupiter — Eclipse Public License 2.0
+
+Other direct and transitive dependencies keep the license declared by their authors.

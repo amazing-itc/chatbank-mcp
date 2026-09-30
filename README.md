@@ -10,6 +10,8 @@ Servidor **MCP de referência** para um banco expor **saldo** e **extrato** a ho
 
 O banco implementa **uma interface Java** (`BankingProvider`). Tools, schemas, widgets, OAuth e um banco fictício já vêm prontos. Nenhuma tool move dinheiro.
 
+Licença **MIT**: [LICENSE](LICENSE). Índice: [docs/README.md](docs/README.md).
+
 ```mermaid
 flowchart LR
     subgraph Host["Host MCP"]
@@ -541,6 +543,8 @@ Não use a porta 5060 — o Chrome bloqueia. Para regravar: `npm install && node
 
 | Precisa de | Vá em |
 |---|---|
+| Índice da documentação | [docs/README.md](./docs/README.md) |
+| Licença MIT e atribuições | [docs/licenca.md](./docs/licenca.md) |
 | Payloads prontos para o Inspector | [GUIA-FACIL.md](./GUIA-FACIL.md) |
 | Implementar o adapter do banco | [CONECTE-SEU-BANCO.md](./CONECTE-SEU-BANCO.md) |
 | Esqueleto para copiar | [`adapter-sample/MeuBancoProvider.java`](./adapter-sample/MeuBancoProvider.java) |
